@@ -43,12 +43,23 @@
                                     <tr class="border-b border-gray-200 hover:bg-gray-50">
                                         <td class="py-3 px-6 font-medium">{{ $product->name }}</td>
                                         <td class="py-3 px-6">{{ $product->category }}</td>
-                                        <td class="py-3 px-6 text-right">${{ number_format($product->purchase_price, 2) }}</td>
-                                        <td class="py-3 px-6 text-right font-bold text-blue-600">${{ number_format($product->sell_price, 2) }}</td>
+                                        <td class="py-3 px-6 text-right">Rp {{ number_format($product->purchase_price, 0, ',', '.') }}</td>
+                                        <td class="py-3 px-6 text-right font-bold text-blue-600">Rp {{ number_format($product->sell_price, 0, ',', '.') }}</td>
                                         <td class="py-3 px-6 text-center">
-                                            <span class="px-2 py-1 rounded-full text-xs font-bold {{ $product->stock <= $product->min_stock ? 'bg-red-100 text-red-600' : 'bg-green-100 text-green-600' }}">
-                                                {{ $product->stock }}
-                                            </span>
+                                            <div class="flex flex-col items-center">
+                                                <span class="px-2 py-1 rounded-full text-xs font-bold {{ $product->stock <= $product->min_stock ? 'bg-red-100 text-red-600' : 'bg-green-100 text-green-600' }}">
+                                                    {{ rtrim(rtrim(number_format($product->stock, 2, ',', '.'), '0'), ',') }} {{ $product->unit }}
+                                                </span>
+                                                @if($product->conversion_factor && $product->bulk_unit)
+                                                    @php
+                                                        $bulkQty = floor($product->stock / $product->conversion_factor);
+                                                        $remQty = fmod($product->stock, $product->conversion_factor);
+                                                    @endphp
+                                                    <span class="text-xs text-gray-500 mt-1">
+                                                        ({{ $bulkQty }} {{ $product->bulk_unit }}@if($remQty > 0) , {{ rtrim(rtrim(number_format($remQty, 2, ',', '.'), '0'), ',') }} {{ $product->unit }} remaining @endif)
+                                                    </span>
+                                                @endif
+                                            </div>
                                         </td>
                                         <td class="py-3 px-6 text-center">
                                             <div class="flex item-center justify-center space-x-2">

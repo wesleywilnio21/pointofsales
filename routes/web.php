@@ -32,6 +32,10 @@ use App\Http\Controllers\ReportController;
 Route::middleware(['auth', 'admin'])->group(function () {
     Route::resource('products', ProductController::class);
     Route::get('/reports', [ReportController::class, 'index'])->name('reports.index');
+    Route::get('/restock', [\App\Http\Controllers\StockEntryController::class, 'index'])->name('restock.index');
+    Route::post('/restock', [\App\Http\Controllers\StockEntryController::class, 'store'])->name('restock.store');
+    Route::resource('suppliers', \App\Http\Controllers\SupplierController::class);
+    Route::resource('users', \App\Http\Controllers\UserController::class)->only(['index', 'store', 'update', 'destroy']);
 });
 
 require __DIR__.'/auth.php';

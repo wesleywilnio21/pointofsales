@@ -20,8 +20,17 @@
                         <x-nav-link :href="route('products.index')" :active="request()->routeIs('products.*')">
                             {{ __('Product Management') }}
                         </x-nav-link>
+                        <x-nav-link :href="route('suppliers.index')" :active="request()->routeIs('suppliers.*')">
+                            {{ __('Suppliers') }}
+                        </x-nav-link>
+                        <x-nav-link :href="route('restock.index')" :active="request()->routeIs('restock.*')">
+                            {{ __('Restock') }}
+                        </x-nav-link>
                         <x-nav-link :href="route('reports.index')" :active="request()->routeIs('reports.*')">
                             {{ __('Reports') }}
+                        </x-nav-link>
+                        <x-nav-link :href="route('users.index')" :active="request()->routeIs('users.*')">
+                            {{ __('Users') }}
                         </x-nav-link>
                     @endif
                 </div>
@@ -84,8 +93,17 @@
                 <x-responsive-nav-link :href="route('products.index')" :active="request()->routeIs('products.*')">
                     {{ __('Product Management') }}
                 </x-responsive-nav-link>
+                <x-responsive-nav-link :href="route('suppliers.index')" :active="request()->routeIs('suppliers.*')">
+                    {{ __('Suppliers') }}
+                </x-responsive-nav-link>
+                <x-responsive-nav-link :href="route('restock.index')" :active="request()->routeIs('restock.*')">
+                    {{ __('Restock') }}
+                </x-responsive-nav-link>
                 <x-responsive-nav-link :href="route('reports.index')" :active="request()->routeIs('reports.*')">
                     {{ __('Reports') }}
+                </x-responsive-nav-link>
+                <x-responsive-nav-link :href="route('users.index')" :active="request()->routeIs('users.*')">
+                    {{ __('Users') }}
                 </x-responsive-nav-link>
             @endif
         </div>

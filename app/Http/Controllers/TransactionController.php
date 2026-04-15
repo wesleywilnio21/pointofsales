@@ -16,9 +16,10 @@ class TransactionController extends Controller
             'cash_received' => 'required|numeric',
             'items' => 'required|array',
             'items.*.product_id' => 'required|exists:products,id',
-            'items.*.quantity' => 'required|integer|min:1',
+            'items.*.quantity' => 'required|numeric|min:0.01', // Allow decimal quantities!
             'items.*.price' => 'required|numeric',
-            'items.*.subtotal' => 'required|numeric'
+            'items.*.subtotal' => 'required|numeric',
+            'items.*.sale_type' => 'nullable|string|in:retail,bulk'
         ]);
 
         try {
@@ -42,24 +43,33 @@ class TransactionController extends Controller
             ]);
 
             foreach ($validated['items'] as $item) {
+                // Fetch product first to figure out conversion factor
+                $product = Product::findOrFail($item['product_id']);
+                
+                $quantityToDeduct = $item['quantity'];
+                
+                if (isset($item['sale_type']) && $item['sale_type'] === 'bulk' && $product->conversion_factor) {
+                    $quantityToDeduct = $item['quantity'] * $product->conversion_factor;
+                }
+
+                // Extra safety check against base units
+                if ($product->stock < $quantityToDeduct) {
+                    throw new \Exception("Not enough stock for {$product->name}");
+                }
+
                 // 1. Create Transaction Detail
                 TransactionDetail::create([
                     'transaction_id' => $transaction->id,
                     'product_id' => $item['product_id'],
                     'quantity' => $item['quantity'],
+                    // You could add a 'unit' column here if you need to show it on receipts
                     'price' => $item['price'],
                     'subtotal' => $item['subtotal']
                 ]);
 
                 // 2. Decrease Product Stock
-                $product = Product::findOrFail($item['product_id']);
-
-                // Extra safety check
-                if ($product->stock < $item['quantity']) {
-                    throw new \Exception("Not enough stock for {$product->name}");
-                }
-
-                $product->decrement('stock', $item['quantity']);
+                $product->stock -= $quantityToDeduct;
+                $product->save();
             }
 
             DB::commit();

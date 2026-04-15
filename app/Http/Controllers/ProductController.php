@@ -23,10 +23,14 @@ class ProductController extends Controller
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'category' => 'required|string|max:255',
-            'stock' => 'required|integer|min:0',
-            'min_stock' => 'required|integer|min:0',
+            'unit' => 'required|string|max:50',
+            'stock' => 'required|numeric|min:0',
+            'min_stock' => 'required|numeric|min:0',
             'purchase_price' => 'required|numeric|min:0',
-            'sell_price' => 'required|numeric|min:0'
+            'sell_price' => 'required|numeric|min:0',
+            'bulk_unit' => 'nullable|string|max:50',
+            'conversion_factor' => 'nullable|numeric|min:0.01',
+            'bulk_price' => 'nullable|numeric|min:0'
         ]);
 
         Product::create($validated);
@@ -42,13 +46,17 @@ class ProductController extends Controller
     public function update(Request $request, Product $product)
     {
         $validated = $request->validate([
-            'stock' => 'required|integer|min:0',
+            'stock' => 'required|numeric|min:0',
             'purchase_price' => 'required|numeric|min:0',
             'sell_price' => 'required|numeric|min:0',
             // Update name and category as well to be a complete backend
             'name' => 'required|string|max:255',
             'category' => 'required|string|max:255',
-            'min_stock' => 'required|integer|min:0',
+            'unit' => 'required|string|max:50',
+            'min_stock' => 'required|numeric|min:0',
+            'bulk_unit' => 'nullable|string|max:50',
+            'conversion_factor' => 'nullable|numeric|min:0.01',
+            'bulk_price' => 'nullable|numeric|min:0'
         ]);
 
         $product->update($validated);
